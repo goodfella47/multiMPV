@@ -1,4 +1,5 @@
 import os
+import sys
 from tkinter import Tk
 from tkinter.filedialog import askopenfilenames, askopenfilename
 import configparser
@@ -45,10 +46,15 @@ class mpvMulti:
 
     def assert_mpv_exe(self):
         def mpv_file_picker():
-            ctypes.windll.user32.MessageBoxW(0, "Please select the MPV executable file", "MPV executable not found", 1)
-            return askopenfilename(initialdir="/", title='Select MPV executable', filetypes=[("executable", ".exe")])
+            Mbox_select = ctypes.windll.user32.MessageBoxW(0, "Please select the MPV executable file", "MPV executable not found", 1)
+            if Mbox_select != 1:
+                sys.exit()
+            filenames = askopenfilename(initialdir="/", title='Select MPV executable', filetypes=[("executable", ".exe")])
+            if not filenames:
+                sys.exit()
+            return filenames
 
-        mpv_path = None
+        mpv_path = ''
         if 'MPV' in self.__config and 'mpv_destination' in self.__config['MPV']:
             mpv_path = self.__config['MPV']['mpv_destination']
 
