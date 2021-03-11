@@ -10,4 +10,3 @@ alternatively, run the multiMPV.py script using python 3.8 or greater.
 
 ## Usage
 multiMPV accepts mp4,mkv and avi video formats. it also accepts txt files with video filenames, it will search for these files in the default_vid_destination folder that is specified in the config.ini file.
-
