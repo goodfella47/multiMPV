@@ -13,15 +13,18 @@ class mpvMulti:
         self.__config = configparser.ConfigParser()
         self.__config.read(self.__config_file)
         self.__filetypes = [
-            ("video format", ".mp4"),
-            ("video format", ".MP4"),
-            ("video format", ".mkv"),
-            ("video format", ".MKV"),
-            ("video format", ".avi"),
-            ("video format", ".AVI"),
-            ("text_format", ".txt")
+            ("video file", ".mp4"),
+            ("video file", ".MP4"),
+            ("video file", ".mkv"),
+            ("video file", ".MKV"),
+            ("video file", ".avi"),
+            ("video file", ".AVI"),
+            ("video file", ".txt")
         ]
-        self.__default_video_scale = 'scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:-1:-1:color=black'
+        video_scale = self.__config['MPV']['video_scale']
+        force_original_aspect_ratio = self.__config['MPV']['force_original_aspect_ratio']
+        self.__video_scale = f'scale={video_scale}:force_original_aspect_ratio={force_original_aspect_ratio},pad={video_scale}:-1:-1:color=black'
+        self.__default_vid_destination = self.__config['MPV']['default_vid_destination']
         self.__filenames = None
         self.__external_file_stack = None
 
@@ -32,24 +35,27 @@ class mpvMulti:
         vids = []
         # show an "Open" dialog box and return the path to the selected file
         files = askopenfilenames(initialdir="C:/", title='select video', filetypes=self.__filetypes)
-        ends_with_txt = [file.endswith('.txt') for file in files]
-        if any(ends_with_txt):
-            for text_file in files:
-                with open(text_file) as f:
-                    for vid_path in f:
-                        vids.append(vid_path.strip('\n'))
-        else:
-            vids = files
+        txt_files = [file for file in files if file.endswith('.txt')]
+        vid_files = [file for file in files if not file.endswith('.txt')]
+        for txt_file in txt_files:
+            with open(txt_file) as f:
+                for vid in f:
+                    vid_path = os.path.join(self.__default_vid_destination, vid.strip('\n'))
+                    # vids.append(r'{}'.format(vid_path))
+                    vids.append(vid_path)
+        vids.extend(vid_files)
         assert len(vids) >= 1, 'no video files were selected'
         assert len(vids) <= 9, 'more than 9 video files were selected'
         return vids
 
     def assert_mpv_exe(self):
         def mpv_file_picker():
-            Mbox_select = ctypes.windll.user32.MessageBoxW(0, "Please select the MPV executable file", "MPV executable not found", 1)
+            Mbox_select = ctypes.windll.user32.MessageBoxW(0, "Please select the MPV executable file",
+                                                           "MPV executable not found", 1)
             if Mbox_select != 1:
                 sys.exit()
-            filenames = askopenfilename(initialdir="/", title='Select MPV executable', filetypes=[("executable", ".exe")])
+            filenames = askopenfilename(initialdir="/", title='Select MPV executable',
+                                        filetypes=[("executable", ".exe")])
             if not filenames:
                 sys.exit()
             return filenames
@@ -65,13 +71,12 @@ class mpvMulti:
                 self.__config.write(conf)
 
         mpv_dir = os.path.dirname(mpv_path)
-        print(mpv_dir)
         return mpv_dir
 
     def generate_scale(self, input_count):
         generated_scale = ''
         for i in range(1, input_count + 1):
-            generated_scale += f'[vid{i}]' + self.__default_video_scale + f'[v{i}];'
+            generated_scale += f'[vid{i}]' + self.__video_scale + f'[v{i}];'
         return generated_scale
 
     def get_mpv_command(self, vids):
@@ -82,7 +87,7 @@ class mpvMulti:
         if len(vids) == 1:
             mpv_command = f' "{vids[0]}"'
         elif len(vids) == 2:
-            mpv_command = f' --profile="two" --lavfi-complex="[vid1]{self.__default_video_scale}[v1];[vid2]{self.__default_video_scale}[v2];[v1][v2]hstack[vo]" "{vids[0]}" --external-file={external_file_stack}'
+            mpv_command = f' --profile="two" --lavfi-complex="[vid1]{self.__video_scale}[v1];[vid2]{self.__video_scale}[v2];[v1][v2]hstack[vo]" "{vids[0]}" --external-file={external_file_stack}'
         elif len(vids) == 3:
             mpv_command = f' --profile="three" --lavfi-complex="{generated_scale}[v1][v2][v3]xstack=inputs=3:layout=0_0|w0_0|0_h0:fill=black[vo]" "{vids[0]}" --external-files={external_file_stack}'
         elif len(vids) == 4:
