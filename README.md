@@ -5,7 +5,7 @@ multiMPV is a wrapper for the mpv media player that allows you to play multiple 
 Download and extract mpv media player from https://mpv.io/
 
 multiMPV can run as a python script or as an executable file.
-to run as an executable, either download and extract a release zip or download this repository and build it using the build instructions bellow and open multiMPV.exe. 
+to run as an executable, either download and extract a release zip or download this repository and build it using the build instructions bellow. 
 alternatively, run the multiMPV.py script using python 3.8 or greater. 
 the first run will prompt you to select an mpv executable file.
 
