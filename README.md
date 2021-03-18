@@ -1,5 +1,5 @@
 # multiMPV 
-multiMPV is a wrapper for the mpv media player that allows playing multiple video files simultaneously in a single window and in a convenient way. currently it supports MP4, MKV and AVI video formats and up to simultaneous 9 video streams.
+multiMPV is a wrapper for the mpv media player that allows playing multiple video files simultaneously in a single window and in a convenient way. currently it supports MP4, MKV and AVI video formats and up to 9 video streams.
 
 ## Installation
 1. Download and extract mpv media player from https://mpv.io/
