@@ -29,7 +29,7 @@ class multiMPV:
         if 'first_run' in self.__config['MPV']:
             self.__first_run = True
             with open(self.__config_file_path, 'w') as conf:
-                self.__config.remove_option('MPV','first_run')
+                self.__config.remove_option('MPV', 'first_run')
                 self.__config.write(conf)
         video_scale = self.__config['MPV']['video_scale']
         force_original_aspect_ratio = self.__config['MPV']['force_original_aspect_ratio']
@@ -85,22 +85,19 @@ class multiMPV:
                 sys.exit()
             return filenames
 
-        mpv_path = ''
-        if 'MPV' in self.__config and 'mpv_path' in self.__config['MPV']:
-            mpv_path = self.__config['MPV']['mpv_path']
+        mpv_path = self.__config['MPV']['mpv_path']
 
-        if self.__first_run:
-            while not os.path.exists(mpv_path):
-                mpv_path = mpv_file_picker()
+        if not os.path.exists(mpv_path):
+            mpv_path = mpv_file_picker()
+            try:
                 with open(self.__config_file_path, 'w') as conf:
                     self.__config['MPV']['mpv_path'] = mpv_path
                     self.__config.write(conf)
-            sys.exit()
-
-        elif not os.path.exists(mpv_path):
-            warning = f'mpv executable not found. please change the "mpv_path" in the config.ini file'
-            messagebox.showwarning(title="Exception", message=warning)
-            sys.exit()
+                if self.__first_run:
+                    sys.exit()
+            except OSError:
+                warning = f'Failed to save the mpv path. please change the "mpv_path" field in the config.ini file'
+                messagebox.showwarning(title="Warning", message=warning)
 
         mpv_dir = os.path.dirname(mpv_path)
         return mpv_dir
@@ -114,7 +111,7 @@ class multiMPV:
     def _get_mpv_command(self, vids):
         input_count = len(vids)
         input_name = f"input\\input{input_count}.conf"
-        input_conf = f'--input-conf="{os.path.join(self.__cwd,input_name)}"'
+        input_conf = f'--input-conf="{os.path.join(self.__cwd, input_name)}"'
         script_name = f"scripts\\cycle-commands.lua"
         script = f'--script="{os.path.join(self.__cwd, script_name)}"'
         generated_scale = self._generate_scale(input_count)
