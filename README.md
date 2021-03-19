@@ -6,5 +6,5 @@ multiMPV is a wrapper for the mpv media player that allows playing multiple vide
 2. Download and install multiMPV setup from the release page, setup will prompt to select an mpv executable at the end of installation. alternatively, run multiMPV.py using python 3.8 and above.  
 
 ## Usage
-To play multiple video files, either run the multiMPV executable and select multiple video files. or, open a text file, write the folder path for each video file in separate lines, save the file with a .mmpv extension and run it.
+To play multiple video files, either run the multiMPV executable and select multiple video files. or, open a text file, write the path for each video file in separate lines, save the file with a .mmpv extension and run it.
 
