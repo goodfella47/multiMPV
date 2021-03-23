@@ -34,7 +34,7 @@ class multiMPV:
         video_scale = self.__config['MPV']['video_scale']
         force_original_aspect_ratio = self.__config['MPV']['force_original_aspect_ratio']
         self.__video_scale = f'scale={video_scale}:force_original_aspect_ratio={force_original_aspect_ratio},pad={video_scale}:-1:-1:color=black'
-        self.__relative_vid_path = self.__config['MPV']['relative_vid_path']
+        self.__relative_vid_path = os.getcwd()
         self.__filenames = None
         self.__external_file_stack = None
 
